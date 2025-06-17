@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @State var path = NavigationPath()
+    @State private var path = NavigationPath()
     @State private var currentIndex = 0
 
     // MARK: -- Private Things
@@ -13,65 +13,67 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack(path: $path) {
             // MARK: -- Header
-            HStack {
-                Text("Selamat datang di")
-                    .font(.title)
-                Text("BEBAS")
-                    .font(.title)
-                    .bold()
-                Spacer()
-            }
-
-            Carousel()
-
-            Text("Apa yang ingin kamu pelajari hari ini?")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(Color(.systemGray))
-                .font(.subheadline)
-
-            Spacer()
-
             VStack {
                 HStack {
-                    Text("Aktivitas di Bebas")
-                        .font(.title2)
-                        .fontWeight(.bold)
+                    Text("Selamat datang di")
+                        .font(.title)
+                    Text("BEBAS")
+                        .font(.title)
+                        .bold()
                     Spacer()
                 }
-
-                HStack {
-                    DashboardButton(title: "Belajar", image: "beranda_belajar", color: .green){
-                        path.append("WordSelection")
+                
+                Carousel()
+                
+                Text("Apa yang ingin kamu pelajari hari ini?")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundColor(Color(.systemGray))
+                    .font(.subheadline)
+                
+                Spacer()
+                
+                VStack {
+                    HStack {
+                        Text("Aktivitas di Bebas")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Spacer()
                     }
-                    DashboardButton(title: "Praktik", image: "beranda_praktik", color: .blue){
-                        path.append("GesturePractice")
+                    
+                    HStack {
+                        DashboardButton(title: "Belajar", image: "beranda_belajar", color: .green) {
+                            path.append("WordSelection")
+                        }
+                        DashboardButton(title: "Praktik", image: "beranda_praktik", color: .blue) {
+                            path.append("GesturePractice")
+                        }
                     }
-                }
-
-                HStack {
-                    DashboardButton(title: "Kamus", image: "beranda_kamus", color: .orange){
-                        path.append("GestureDictionary")
+                    
+                    HStack {
+                        DashboardButton(title: "Kamus", image: "beranda_kamus", color: .orange) {
+                            path.append("GestureDictionary")
+                        }
+                        DashboardButton(title: "Eja Kata", image: "beranda_ejakata", color: .red) {
+                            path.append("SentenceSpelling")
+                        }
                     }
-                    DashboardButton(title: "Eja Kata", image: "beranda_ejakata", color: .red){
-                        path.append("SentenceSpelling")
+                    .navigationDestination(for: String.self) { value in
+                        if value == "WordSelection" {
+                            WordSelectionView(path: $path)
+                        } else if value == "GesturePractice" {
+                            EmptyView()
+                        } else if value == "GestureDictionary" {
+                            EmptyView()
+                        } else if value == "SentenceSpelling" {
+                            EmptyView()
+                        } else {
+                            Text("Unknown Destination: \(value)")
+                        }
+                        
                     }
                 }
             }
-        }
-        .padding()
-        .navigationDestination(for: String.self) { value in
-            switch value {
-            case "WordSelection":
-                WordSelectionView(path: $path)
-//            case "GesturePractice":
-//                GesturePracticeView()
-//            case "GestureDictionary":
-//                GestureDictionaryView()
-//            case "SentenceSpelling":
-//                SentenceSpellingView()
-            default:
-                Text("⚠︎ ERROR ⚠︎")
-            }
+            .padding()
         }
     }
 }
@@ -108,7 +110,9 @@ extension DashboardView {
     }
 
     @ViewBuilder
-    private func DashboardButton(title: String, image: String, color: Color, action: @escaping () -> Void) -> some View {
+    private func DashboardButton(
+        title: String, image: String, color: Color, action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             VStack {
                 Image(image)
