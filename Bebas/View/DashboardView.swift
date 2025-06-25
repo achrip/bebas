@@ -10,18 +10,18 @@ import AVKit
 import WebKit
 
 struct DashboardView: View {
+    @AppStorage("pertamaKaliBukaAplikasiBebas") var firstTimeOpenBebasApp: Bool = false
+
+    @StateObject var globalData = GlobalData()
+
+    @State private var currentIndex: Int = 0
+    @State private var path: [Route] = []
+
+    private var images: [String] = ["beranda_iklan1", "beranda_iklan2", "beranda_iklan3", "beranda_iklan4"]
+    private let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    
     var body: some View {
-        NavigationStack {
-//            VStack {
-//                ZStack {
-//                    CameraView()
-//                        .frame(width: 400, height: 1000)
-//                        .cornerRadius(12)
-//                        .shadow(radius: 5)
-//                        .padding([.bottom], 500)
-//                    
-//                }
-//            }
+        NavigationStack(path: $path) {
             VStack {
                 HStack {
                     Text("Selamat datang di")
@@ -35,19 +35,26 @@ struct DashboardView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(Color(.systemGray))
                     .font(.subheadline)
-                TabView {
-                    DashboardImage(title: "beranda_iklan1")
-                    DashboardImage(title: "beranda_iklan2")
-                    DashboardImage(title: "beranda_iklan3")
-                    DashboardImage(title: "beranda_iklan4")
+                
+                TabView(selection: $currentIndex) {
+                    ForEach(0..<images.count, id: \.self) { index in
+                        DashboardImage(image: images[index])
+                            .tag(index)
+                    }
                 }
                 .frame(height: 180)
                 .tabViewStyle(PageTabViewStyle())
-                .indexViewStyle(PageIndexViewStyle())
+                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                 .cornerRadius(10)
+                .onReceive(timer) { _ in
+                    withAnimation {
+                        currentIndex = (currentIndex + 1) % images.count
+                    }
+                }
                 
                 Spacer()
                     .frame(height: 24)
+                
                 VStack(spacing: 16) {
                     HStack {
                         Text("Aktivitas di Bebas")
@@ -55,27 +62,76 @@ struct DashboardView: View {
                             .fontWeight(.bold)
                         Spacer()
                     }
+                    
                     HStack(spacing: 16) {
-                        NavigationLink(destination: Learn1View()) {
+                        Button(action: {
+                            path.append(.onBoardingList)
+                        }, label: {
                             DashboardButton(title: "Belajar", image: "beranda_belajar", color: .green)
-                        }
-                        DashboardButton(title: "Praktik", image: "beranda_praktik", color: .blue)
+                        })
+                        Button(action: {
+                            path.append(.practiceCamera)
+                        }, label: {
+                            DashboardButton(title: "Praktik", image: "beranda_praktik", color: .blue)
+                        })
                     }
+                    
                     HStack(spacing: 16) {
-                        NavigationLink(destination: DictionaryView()) {
-                            DashboardButton(title: "Kamus", image: "beranda_kamus", color: .orange)
-                        }
-                        DashboardButton(title: "Eja Kata", image: "beranda_ejakata", color: .red)
+                        Button(action: {
+                            path.append(.alphaNumericAlphaNumeric)
+                        }, label: {
+                            DashboardButton(title: "Alfanumerik", image: "beranda_alfanumerik", color: .orange)
+                        })
+                        Button(action: {
+                            path.append(.spellWord)
+                        }, label: {
+                            DashboardButton(title: "Eja Kata", image: "beranda_ejakata", color: .red)
+                        })
                     }
                 }
             }
             .padding(24)
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .onBoardingList:
+                    if !firstTimeOpenBebasApp {
+                        OnBoardingListiew(path: $path, onClick: {
+                            firstTimeOpenBebasApp = true
+                            path.append(.onBoardingList)
+                        })
+                    } else {
+                        LearnListWordsView(path: $path)
+                            .environmentObject(globalData)
+                    }
+//                case .learnListWords:
+//                    LearnListWordsView(path: $path)
+//                        .environmentObject(globalData)
+                case .learnCamera:
+                    LearnCameraView(path: $path)
+                        .environmentObject(globalData)
+                case .practiceCamera:
+                    PracticeCameraView(path: $path)
+                case .alphaNumericAlphaNumeric:
+                    AlphaNumericOptionView(path: $path)
+                case .alphaNumericAlphabet:
+                    AlphaNumericAlphabetView(path: $path)
+                case .alphaNumericNumber:
+                    AlphaNumericNumberView(path: $path)
+                case .spellWord:
+                    SpellWordView(path: $path)
+                }
+            }
+//            .onAppear {
+////                if firstTimeOpenBebasApp && path.isEmpty {
+////                    path.append(.learnListWords)
+////                }
+//            }
         }
     }
     
-    func DashboardImage(title: String) -> some View {
+    func DashboardImage(image: String) -> some View {
         HStack {
-            Image(title)
+            Image(image)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .clipped()
@@ -104,5 +160,5 @@ struct DashboardView: View {
 }
 
 #Preview {
-    ContentView()
+    DashboardView()
 }

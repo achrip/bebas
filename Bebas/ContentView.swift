@@ -7,17 +7,9 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    @AppStorage("firstTimeOpenBebasApp") var firstTimeOpenBebasApp: Bool = false
-    
+struct ContentView: View {    
     var body: some View {
-        NavigationStack {
-            if !firstTimeOpenBebasApp {
-                DashboardView()
-            } else {
-                DashboardView()
-            }
-        }
+        DashboardView()
     }
     
 }
