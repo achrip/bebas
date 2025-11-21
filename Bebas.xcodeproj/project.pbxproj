@@ -29,16 +29,6 @@
 		6D46C2C32DF735C200558182 /* BebasUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BebasUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6D2520182DF81797007AD64E /* Exceptions for "Bebas" folder in "Bebas" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 6D46C2A82DF735C100558182 /* Bebas */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		401E2C462E03EC110018C7C0 /* Video_MOV */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -48,9 +38,6 @@
 		};
 		6D46C2AB2DF735C100558182 /* Bebas */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				6D2520182DF81797007AD64E /* Exceptions for "Bebas" folder in "Bebas" target */,
-			);
 			path = Bebas;
 			sourceTree = "<group>";
 		};
